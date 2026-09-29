@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hit the 60s — Book 2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--navy:#1F3864;--blue:#2E75B6;--red:#C00000;--green:#00B050;--gold:#F4A800;--bg:#F0F4FA;--card:#FFFFFF;--text:#1a1a2e;--muted:#6B7280;--border:#E2E8F0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:var(--navy);padding:16px 20px;display:flex;align-items:center;gap:12px;}
+.logo-badge{background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;padding:4px 10px;border-radius:6px;}
+header h1{color:#fff;font-size:18px;font-weight:700;}
+header span{color:#94A3B8;font-size:13px;margin-left:auto;}
+.container{max-width:680px;margin:0 auto;padding:24px 16px 60px;}
+#selector{text-align:center;padding:40px 20px;}
+#selector h2{font-size:26px;font-weight:800;color:var(--navy);margin-bottom:6px;}
+#selector p{color:var(--muted);font-size:14px;margin-bottom:32px;}
+.test-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:400px;margin:0 auto;}
+.test-btn{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:18px 8px;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.test-btn:hover{border-color:var(--blue);background:#EEF4FF;transform:translateY(-2px);}
+.test-btn .num{font-size:24px;font-weight:800;color:var(--navy);}
+.test-btn .lbl{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+#quiz{display:none;}
+.quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--blue);font-size:14px;font-weight:600;padding:6px 0;}
+.quiz-title{font-size:18px;font-weight:800;color:var(--navy);}
+.quiz-sub{font-size:12px;color:var(--muted);margin-left:auto;}
+.progress-wrap{background:var(--border);border-radius:99px;height:6px;margin-bottom:24px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--navy));border-radius:99px;transition:width 0.4s ease;}
+.q-card{background:var(--card);border-radius:16px;padding:28px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:16px;}
+.q-num{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.q-text{font-size:17px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:24px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice{display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.18s;background:#FAFBFC;}
+.choice:hover:not(.locked){border-color:var(--blue);background:#EEF4FF;}
+.choice-letter{width:32px;height:32px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--muted);flex-shrink:0;}
+.choice-text{font-size:15px;color:var(--text);flex:1;}
+.choice.correct{border-color:var(--green);background:#F0FDF4;}
+.choice.correct .choice-letter{background:var(--green);color:#fff;}
+.choice.wrong{border-color:var(--red);background:#FFF0F0;}
+.choice.wrong .choice-letter{background:var(--red);color:#fff;}
+.choice.selected{border-color:var(--blue);background:#EEF4FF;}
+.choice.selected .choice-letter{background:var(--blue);color:#fff;}
+.choice.locked{cursor:default;}
+.feedback{display:none;margin-top:14px;padding:12px 16px;border-radius:10px;font-size:14px;font-weight:600;}
+.feedback.correct-fb{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0;display:block;}
+.feedback.wrong-fb{background:#FFF0F0;color:var(--red);border:1px solid #FECACA;display:block;}
+.nav-row{display:flex;gap:10px;margin-top:6px;}
+.nav-btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.18s;}
+.nav-btn.primary{background:var(--navy);color:#fff;}
+.nav-btn.primary:hover{background:var(--blue);}
+.nav-btn.secondary{background:var(--border);color:var(--muted);}
+.nav-btn.secondary:hover{background:#D1D5DB;color:var(--text);}
+.nav-btn:disabled{opacity:0.4;cursor:not-allowed;}
+#results{display:none;}
+.result-card{background:var(--card);border-radius:20px;padding:36px 24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:20px;}
+.result-emoji{font-size:60px;margin-bottom:16px;display:block;}
+.result-score{font-size:56px;font-weight:800;line-height:1;margin-bottom:4px;}
+.result-score.pass{color:var(--green);}
+.result-score.fail{color:var(--red);}
+.result-label{font-size:14px;color:var(--muted);margin-bottom:16px;}
+.result-badge{display:inline-block;padding:8px 20px;border-radius:99px;font-size:15px;font-weight:700;margin-bottom:20px;}
+.result-badge.pass{background:#F0FDF4;color:var(--green);}
+.result-badge.fail{background:#FFF0F0;color:var(--red);}
+.result-msg{font-size:14px;color:var(--muted);line-height:1.6;}
+.review-list{background:var(--card);border-radius:16px;padding:20px;margin-bottom:20px;}
+.review-list h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;}
+.review-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.review-item:last-child{border-bottom:none;}
+.review-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.review-q{font-size:13px;color:var(--text);flex:1;}
+.review-ans{font-size:12px;font-weight:600;}
+.review-ans.wrong{color:var(--red);}
+.correct-ans{color:var(--green);}
+.result-actions{display:flex;flex-direction:column;gap:10px;}
+.action-btn{padding:15px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.18s;}
+.action-btn.primary{background:var(--navy);color:#fff;}
+.action-btn.primary:hover{background:var(--blue);}
+.action-btn.outline{background:none;border:2px solid var(--border);color:var(--muted);}
+.action-btn.outline:hover{border-color:var(--blue);color:var(--blue);}
+.page-footer{text-align:center;margin-top:40px;font-size:13px;color:#800020;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">HIT THE 60s</div>
+  <h1>Book 2 — Practice Tests</h1>
+  <span>ALC Prep Course</span>
+</header>
+<div class="container">
+  <div id="selector">
+    <h2>Book Two</h2>
+    <p>Choose a test to begin. Pass score: 24 / 30</p>
+    <div class="test-grid" id="testGrid"></div>
+  </div>
+  <div id="quiz">
+    <div class="quiz-header">
+      <button class="back-btn" id="backBtn">← Back</button>
+      <span class="quiz-title" id="quizTitle"></span>
+      <span class="quiz-sub">Pass: 24/30</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="q-card">
+      <div class="q-num" id="qNum"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn secondary" id="prevBtn">← Prev</button>
+      <button class="nav-btn primary" id="nextBtn">Next →</button>
+    </div>
+  </div>
+  <div id="results">
+    <div class="result-card">
+      <span class="result-emoji" id="resultEmoji"></span>
+      <div class="result-score" id="resultScore"></div>
+      <div class="result-label">out of 30 questions</div>
+      <div class="result-badge" id="resultBadge"></div>
+      <div class="result-msg" id="resultMsg"></div>
+    </div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="result-actions">
+      <button class="action-btn primary" id="retryBtn">🔄 Try Again</button>
+      <button class="action-btn outline" id="backBtn2">← Choose Another Test</button>
+    </div>
+  </div>
+  <div class="page-footer">
+    <div>Prepared by Khalid Alameer &nbsp;|&nbsp; Western Naval Aviation Group &nbsp;|</div>
+    <div style="text-align:center;font-size:14px;font-weight:700;margin-top:6px;">"Hit the 90s"</div>
+  </div>
+</div>
+<script>
+var BOOK_TITLE="Book 2";
+var TESTS=[{"title":"Test 1","questions":[{"q":"______ are those men?","ch":["A) What","B) Who","C) Where","D) When"],"a":"B"},{"q":"These are ______ books.","ch":["A) my","B) his","C) her","D) their"],"a":"D"},{"q":"The children are playing ______ the park.","ch":["A) in","B) on","C) at","D) under"],"a":"C"},{"q":"She ______ a good student.","ch":["A) am","B) are","C) is","D) be"],"a":"B"},{"q":"______ pen is this?","ch":["A) Who","B) What","C) Whose","D) Where"],"a":"C"},{"q":"He ______ in the classroom.","ch":["A) am","B) is","C) are","D) be"],"a":"C"},{"q":"Are they officers?  —  Yes, ______.","ch":["A) they aren't","B) they are","C) we are","D) he is"],"a":"B"},{"q":"This is ______ umbrella.","ch":["A) a","B) an","C) the","D) my"],"a":"D"},{"q":"______ are you from?","ch":["A) What","B) Who","C) When","D) Where"],"a":"D"},{"q":"The soldiers are ______ the barracks.","ch":["A) on","B) in","C) at","D) under"],"a":"B"},{"q":"She is ______ engineer.","ch":["A) a","B) an","C) the","D) his"],"a":"C"},{"q":"______ is the class?  —  It's at 0800.","ch":["A) Where","B) Who","C) What","D) When"],"a":"D"},{"q":"These ______ our notebooks.","ch":["A) is","B) am","C) are","D) be"],"a":"B"},{"q":"The book is ______ the table.","ch":["A) in","B) under","C) on","D) at"],"a":"C"},{"q":"Are you a pilot?  —  No, ______.","ch":["A) I am","B) you are","C) I'm not","D) he is"],"a":"D"},{"q":"She ______ my sister.","ch":["A) am","B) is","C) are","D) be"],"a":"B"},{"q":"______ is your name?","ch":["A) Where","B) What","C) Who","D) When"],"a":"C"},{"q":"Those are ______ chairs.","ch":["A) my","B) his","C) our","D) their"],"a":"C"},{"q":"The pen ______ on the desk.","ch":["A) am","B) are","C) is","D) be"],"a":"D"},{"q":"We ______ not soldiers.","ch":["A) am","B) is","C) are","D) be"],"a":"B"},{"q":"______ book is that?  —  It is Ahmed's.","ch":["A) Who","B) What","C) Whose","D) Where"],"a":"A"},{"q":"Is he your brother?  —  Yes, ______.","ch":["A) he isn't","B) she is","C) they are","D) he is"],"a":"C"},{"q":"The soldiers are ______ the base.","ch":["A) on","B) in","C) at","D) under"],"a":"B"},{"q":"______ is the meeting?  —  It is in Room 3.","ch":["A) Who","B) When","C) What","D) Where"],"a":"C"},{"q":"Those ______ their books.","ch":["A) is","B) am","C) are","D) be"],"a":"B"},{"q":"This is ______ interesting book.","ch":["A) a","B) an","C) the","D) his"],"a":"A"},{"q":"She is ______ officer.","ch":["A) a","B) an","C) the","D) my"],"a":"B"},{"q":"The map is ______ the wall.","ch":["A) under","B) in","C) on","D) at"],"a":"C"},{"q":"Is this your bag?  —  No, it ______.","ch":["A) is","B) isn't","C) are","D) aren't"],"a":"B"},{"q":"______ is she?  —  She is a doctor.","ch":["A) Where","B) When","C) What","D) Who"],"a":"C"}]},{"title":"Test 2","questions":[{"q":"______ is your teacher?","ch":["A) Where","B) Who","C) What","D) When"],"a":"C"},{"q":"These are ______ pens.","ch":["A) my","B) his","C) her","D) their"],"a":"B"},{"q":"The bag is ______ the chair.","ch":["A) on","B) in","C) under","D) at"],"a":"C"},{"q":"Is she a nurse?  —  Yes, ______.","ch":["A) she isn't","B) he is","C) she is","D) they are"],"a":"B"},{"q":"______ are those?  —  Those are maps.","ch":["A) Who","B) When","C) What","D) Where"],"a":"C"},{"q":"He ______ a pilot.","ch":["A) am","B) is","C) are","D) be"],"a":"D"},{"q":"The soldiers ______ in the classroom.","ch":["A) am","B) is","C) are","D) be"],"a":"B"},{"q":"This is ______ apple.","ch":["A) a","B) an","C) the","D) his"],"a":"C"},{"q":"______ is the class?  —  It is in Building 2.","ch":["A) What","B) Who","C) When","D) Where"],"a":"D"},{"q":"Those are ______ notebooks.","ch":["A) my","B) his","C) her","D) their"],"a":"B"},{"q":"She is ______ engineer.","ch":["A) a","B) an","C) the","D) my"],"a":"C"},{"q":"Is he your teacher?  —  No, ______.","ch":["A) he is","B) she is","C) he isn't","D) they are"],"a":"C"},{"q":"The book is ______ the bag.","ch":["A) on","B) in","C) under","D) at"],"a":"B"},{"q":"______ are you?  —  I am a soldier.","ch":["A) Where","B) When","C) What","D) Who"],"a":"A"},{"q":"We ______ students.","ch":["A) am","B) is","C) are","D) be"],"a":"A"},{"q":"______ classroom is this?","ch":["A) What","B) Who","C) Whose","D) Where"],"a":"C"},{"q":"The pen is ______ the notebook.","ch":["A) in","B) on","C) under","D) at"],"a":"D"},{"q":"Those ______ not their books.","ch":["A) is","B) am","C) are","D) be"],"a":"C"},{"q":"______ is your name?  —  Ahmed.","ch":["A) Where","B) Who","C) When","D) What"],"a":"C"},{"q":"She ______ a good teacher.","ch":["A) am","B) are","C) is","D) be"],"a":"A"},{"q":"The soldiers are ______ the gate.","ch":["A) on","B) in","C) at","D) under"],"a":"C"},{"q":"Is this ______ eraser?","ch":["A) a","B) an","C) the","D) my"],"a":"C"},{"q":"______ book is that?","ch":["A) Who","B) What","C) Where","D) Whose"],"a":"B"},{"q":"He ______ my brother.","ch":["A) am","B) are","C) is","D) be"],"a":"C"},{"q":"Are they pilots?  —  No, ______.","ch":["A) they are","B) they aren't","C) we are","D) he is"],"a":"A"},{"q":"The map is ______ the desk.","ch":["A) on","B) in","C) under","D) at"],"a":"B"},{"q":"Those are ______ chairs.","ch":["A) my","B) his","C) our","D) their"],"a":"C"},{"q":"Is she your sister?  —  Yes, ______.","ch":["A) she isn't","B) he is","C) she is","D) they are"],"a":"B"},{"q":"______ are those men?","ch":["A) What","B) When","C) Where","D) Who"],"a":"A"},{"q":"The class starts ______ Monday.","ch":["A) in","B) at","C) on","D) by"],"a":"C"}]},{"title":"Test 3","questions":[{"q":"______ is the meeting?  —  It is at 1400.","ch":["A) Where","B) Who","C) What","D) When"],"a":"C"},{"q":"These ______ our books.","ch":["A) is","B) am","C) are","D) be"],"a":"B"},{"q":"She is ______ nurse.","ch":["A) a","B) an","C) the","D) my"],"a":"C"},{"q":"The pen is ______ the desk.","ch":["A) in","B) on","C) under","D) at"],"a":"D"},{"q":"Are you a doctor?  —  Yes, ______.","ch":["A) I am not","B) you are","C) I am","D) he is"],"a":"B"},{"q":"______ book is this?","ch":["A) Who","B) What","C) Whose","D) Where"],"a":"C"},{"q":"These ______ not my notebooks.","ch":["A) is","B) am","C) are","D) be"],"a":"D"},{"q":"______ are those?  —  Those are books.","ch":["A) Who","B) When","C) What","D) Where"],"a":"B"},{"q":"The soldiers are ______ the classroom.","ch":["A) on","B) under","C) in","D) at"],"a":"C"},{"q":"Those are ______ chairs.","ch":["A) my","B) his","C) her","D) their"],"a":"C"},{"q":"Is this ______ umbrella?","ch":["A) a","B) an","C) the","D) his"],"a":"C"},{"q":"______ is your teacher?","ch":["A) Where","B) When","C) What","D) Who"],"a":"D"},{"q":"She ______ my teacher.","ch":["A) am","B) are","C) is","D) be"],"a":"A"},{"q":"The book is ______ the table.","ch":["A) in","B) on","C) under","D) at"],"a":"C"},{"q":"Are they soldiers?  —  No, ______.","ch":["A) they are","B) we are","C) they aren't","D) he is"],"a":"B"},{"q":"______ is the class?","ch":["A) What","B) Who","C) Where","D) When"],"a":"C"},{"q":"Those ______ their books.","ch":["A) is","B) am","C) be","D) are"],"a":"D"},{"q":"The map is ______ the wall.","ch":["A) under","B) in","C) at","D) on"],"a":"B"},{"q":"Is he your teacher?  —  Yes, ______.","ch":["A) she is","B) he isn't","C) he is","D) they are"],"a":"C"},{"q":"We ______ not officers.","ch":["A) am","B) is","C) are","D) be"],"a":"B"},{"q":"______ are you?  —  I am from Jeddah.","ch":["A) What","B) When","C) Who","D) Where"],"a":"C"},{"q":"This is ______ interesting book.","ch":["A) a","B) an","C) the","D) his"],"a":"B"},{"q":"The notebook is ______ the bag.","ch":["A) on","B) in","C) at","D) under"],"a":"C"},{"q":"She ______ a pilot.","ch":["A) am","B) are","C) is","D) be"],"a":"A"},{"q":"Those ______ not our pens.","ch":["A) is","B) am","C) are","D) be"],"a":"D"},{"q":"______ are those men?","ch":["A) What","B) Where","C) Who","D) When"],"a":"C"},{"q":"The chair is ______ the table.","ch":["A) in","B) on","C) at","D) under"],"a":"B"},{"q":"Is this your pen?  —  No, it ______.","ch":["A) is","B) are","C) isn't","D) aren't"],"a":"C"},{"q":"Those are ______ notebooks.","ch":["A) my","B) his","C) her","D) their"],"a":"D"},{"q":"______ is the base?","ch":["A) What","B) When","C) Who","D) Where"],"a":"B"}]},{"title":"Test 4","questions":[{"q":"She ______ my sister.","ch":["A) am","B) are","C) is","D) be"],"a":"C"},{"q":"______ are those?  —  Those are maps.","ch":["A) Who","B) When","C) What","D) Where"],"a":"C"},{"q":"The bag is ______ the chair.","ch":["A) on","B) in","C) under","D) at"],"a":"C"},{"q":"Is this ______ eraser?","ch":["A) a","B) an","C) the","D) my"],"a":"B"},{"q":"______ book is that?","ch":["A) Who","B) What","C) Whose","D) Where"],"a":"A"},{"q":"These are ______ books.","ch":["A) my","B) his","C) our","D) their"],"a":"C"},{"q":"The soldiers ______ in the barracks.","ch":["A) am","B) is","C) are","D) be"],"a":"D"},{"q":"______ is your name?","ch":["A) Where","B) Who","C) When","D) What"],"a":"C"},{"q":"The pen is ______ the book.","ch":["A) in","B) on","C) at","D) under"],"a":"C"},{"q":"Are they officers?  —  No, ______.","ch":["A) they are","B) we are","C) they aren't","D) he is"],"a":"D"},{"q":"She is ______ engineer.","ch":["A) a","B) an","C) the","D) his"],"a":"B"},{"q":"______ is the class?  —  At 0900.","ch":["A) Where","B) Who","C) What","D) When"],"a":"C"},{"q":"Those ______ not my pens.","ch":["A) is","B) am","C) are","D) be"],"a":"B"},{"q":"The map is ______ the wall.","ch":["A) under","B) in","C) on","D) at"],"a":"C"},{"q":"Is he your teacher?  —  No, ______.","ch":["A) he is","B) she is","C) he isn't","D) they are"],"a":"B"},{"q":"We ______ students.","ch":["A) am","B) is","C) are","D) be"],"a":"C"},{"q":"______ is your teacher?","ch":["A) Where","B) When","C) What","D) Who"],"a":"A"},{"q":"This is ______ apple.","ch":["A) a","B) an","C) the","D) my"],"a":"C"},{"q":"The notebook is ______ the bag.","ch":["A) on","B) in","C) at","D) under"],"a":"D"},{"q":"He ______ a good soldier.","ch":["A) am","B) is","C) are","D) be"],"a":"A"},{"q":"Those ______ their chairs.","ch":["A) is","B) am","C) are","D) be"],"a":"D"},{"q":"______ are you from?","ch":["A) What","B) Who","C) Where","D) When"],"a":"B"},{"q":"Is this your notebook?  —  Yes, ______.","ch":["A) it isn't","B) they are","C) it is","D) we are"],"a":"C"},{"q":"The chair is ______ the desk.","ch":["A) in","B) under","C) at","D) on"],"a":"C"},{"q":"She ______ a nurse.","ch":["A) am","B) are","C) is","D) be"],"a":"B"},{"q":"______ are those men?","ch":["A) What","B) Where","C) Who","D) When"],"a":"C"},{"q":"The class starts ______ Friday.","ch":["A) in","B) at","C) on","D) by"],"a":"C"},{"q":"Those are ______ books.","ch":["A) my","B) his","C) her","D) their"],"a":"B"},{"q":"Is she your teacher?  —  Yes, ______.","ch":["A) she isn't","B) she is","C) he is","D) they are"],"a":"A"},{"q":"______ is the classroom?","ch":["A) What","B) Who","C) When","D) Where"],"a":"B"}]},{"title":"Test 5","questions":[{"q":"______ are those?  —  Those are chairs.","ch":["A) Who","B) When","C) What","D) Where"],"a":"C"},{"q":"He ______ my teacher.","ch":["A) am","B) are","C) is","D) be"],"a":"C"},{"q":"This is ______ orange.","ch":["A) a","B) an","C) the","D) my"],"a":"C"},{"q":"The soldiers are ______ the barracks.","ch":["A) on","B) under","C) at","D) in"],"a":"D"},{"q":"Is she your sister?  —  No, ______.","ch":["A) she is","B) he is","C) she isn't","D) they are"],"a":"B"},{"q":"______ is the meeting?  —  It is at 1500.","ch":["A) Where","B) Who","C) What","D) When"],"a":"B"},{"q":"Those ______ their books.","ch":["A) is","B) am","C) are","D) be"],"a":"C"},{"q":"The pen is ______ the desk.","ch":["A) in","B) on","C) at","D) under"],"a":"D"},{"q":"Are they students?  —  Yes, ______.","ch":["A) they aren't","B) we are","C) they are","D) he is"],"a":"C"},{"q":"______ is your name?","ch":["A) Where","B) Who","C) When","D) What"],"a":"C"},{"q":"She is ______ officer.","ch":["A) a","B) an","C) the","D) my"],"a":"B"},{"q":"The book is ______ the table.","ch":["A) in","B) on","C) at","D) under"],"a":"C"},{"q":"These ______ our pens.","ch":["A) is","B) am","C) are","D) be"],"a":"C"},{"q":"______ book is this?","ch":["A) Who","B) What","C) Where","D) Whose"],"a":"B"},{"q":"Is this your bag?  —  No, ______.","ch":["A) it is","B) they are","C) it isn't","D) we are"],"a":"B"},{"q":"______ are you?  —  I am a pilot.","ch":["A) Where","B) When","C) Who","D) What"],"a":"C"},{"q":"The map is ______ the desk.","ch":["A) in","B) on","C) at","D) under"],"a":"C"},{"q":"We ______ not pilots.","ch":["A) am","B) is","C) are","D) be"],"a":"A"},{"q":"She ______ my nurse.","ch":["A) am","B) are","C) is","D) be"],"a":"D"},{"q":"Those ______ not their chairs.","ch":["A) is","B) am","C) are","D) be"],"a":"C"},{"q":"______ are those men?","ch":["A) What","B) When","C) Who","D) Where"],"a":"B"},{"q":"The notebook is ______ the bag.","ch":["A) on","B) in","C) at","D) under"],"a":"D"},{"q":"Is he a doctor?  —  Yes, ______.","ch":["A) he isn't","B) she is","C) they are","D) he is"],"a":"C"},{"q":"______ is the class?","ch":["A) What","B) Who","C) Where","D) When"],"a":"B"},{"q":"These are ______ books.","ch":["A) my","B) his","C) our","D) their"],"a":"B"},{"q":"The chair is ______ the desk.","ch":["A) in","B) on","C) under","D) at"],"a":"D"},{"q":"______ is your teacher?","ch":["A) Where","B) When","C) Who","D) What"],"a":"C"},{"q":"The soldiers ______ in the classroom.","ch":["A) am","B) is","C) are","D) be"],"a":"B"},{"q":"Is this ______ eraser?  —  Yes, it is.","ch":["A) a","B) an","C) the","D) his"],"a":"B"},{"q":"Those ______ my pens.","ch":["A) is","B) am","C) are","D) be"],"a":"C"}]}];
+var currentTest=0,currentQ=0,answers=[],answered=[];
+
+// Build test grid buttons
+var grid=document.getElementById('testGrid');
+for(var i=0;i<TESTS.length;i++){
+  var btn=document.createElement('div');
+  btn.className='test-btn';
+  btn.innerHTML='<span class="num">'+(i+1)+'</span><span class="lbl">Test</span>';
+  (function(idx){btn.addEventListener('click',function(){startTest(idx);});})(i);
+  grid.appendChild(btn);
+}
+
+// Button event listeners
+document.getElementById('backBtn').addEventListener('click',backToSelector);
+document.getElementById('backBtn2').addEventListener('click',backToSelector);
+document.getElementById('prevBtn').addEventListener('click',prevQ);
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('retryBtn').addEventListener('click',function(){startTest(currentTest);});
+
+function startTest(idx){
+  currentTest=idx;currentQ=0;
+  answers=new Array(30).fill(null);
+  answered=new Array(30).fill(false);
+  document.getElementById('selector').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quizTitle').textContent=BOOK_TITLE+' — '+TESTS[idx].title;
+  renderQ();
+}
+
+function renderQ(){
+  var test=TESTS[currentTest];
+  var q=test.questions[currentQ];
+  var total=test.questions.length;
+  document.getElementById('qNum').textContent='Question '+(currentQ+1)+' of '+total;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('progressFill').style.width=(((currentQ+1)/total)*100)+'%';
+  var fb=document.getElementById('feedback');
+  fb.className='feedback';fb.textContent='';
+  var choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  q.ch.forEach(function(choice,i){
+    var letter=['A','B','C','D'][i];
+    var div=document.createElement('div');
+    div.className='choice';
+    if(answered[currentQ])div.classList.add('locked');
+    var userAns=answers[currentQ];
+    if(answered[currentQ]){
+      if(letter===q.a)div.classList.add('correct');
+      else if(letter===userAns&&userAns!==q.a)div.classList.add('wrong');
+    }else if(userAns===letter){div.classList.add('selected');}
+    div.innerHTML='<div class="choice-letter">'+letter+'</div><div class="choice-text">'+choice.substring(3)+'</div>';
+    if(!answered[currentQ]){
+      (function(l){div.addEventListener('click',function(){selectAnswer(l);});})(letter);
+    }
+    choicesEl.appendChild(div);
+  });
+  if(answered[currentQ]){
+    var correct=answers[currentQ]===q.a;
+    fb.className='feedback '+(correct?'correct-fb':'wrong-fb');
+    fb.textContent=correct?'✓ Correct!':'✗ Wrong. The correct answer is '+q.a+'.';
+  }
+  document.getElementById('prevBtn').disabled=currentQ===0;
+  document.getElementById('nextBtn').textContent=currentQ===TESTS[currentTest].questions.length-1?'Finish ✓':'Next →';
+}
+
+function selectAnswer(letter){
+  if(answered[currentQ])return;
+  answers[currentQ]=letter;answered[currentQ]=true;renderQ();
+}
+
+function nextQ(){
+  if(!answered[currentQ]){alert('Please choose an answer first.');return;}
+  if(currentQ<TESTS[currentTest].questions.length-1){currentQ++;renderQ();}
+  else{showResults();}
+}
+
+function prevQ(){if(currentQ>0){currentQ--;renderQ();}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  var test=TESTS[currentTest];var score=0;
+  answers.forEach(function(a,i){if(a===test.questions[i].a)score++;});
+  var pass=score>=24;
+  document.getElementById('resultEmoji').textContent=pass?'🎯':'📚';
+  document.getElementById('resultScore').textContent=score+'/30';
+  document.getElementById('resultScore').className='result-score '+(pass?'pass':'fail');
+  var badge=document.getElementById('resultBadge');
+  badge.textContent=pass?'✅ PASSED':'❌ NOT PASSED';
+  badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultMsg').textContent=pass?'Excellent! You scored '+score+' out of 30. Keep it up!':'You scored '+score+' out of 30. You need 24 to pass. Review your mistakes and try again!';
+  var reviewList=document.getElementById('reviewList');
+  var wrongs=answers.map(function(a,i){return{i:i,a:a,correct:a===test.questions[i].a,q:test.questions[i]};}).filter(function(x){return!x.correct;});
+  if(wrongs.length===0){
+    reviewList.innerHTML='<h3>Review</h3><p style="color:var(--green);font-size:14px;padding:10px 0">🎉 Perfect score! No mistakes.</p>';
+  }else{
+    reviewList.innerHTML='<h3>Mistakes to Review ('+wrongs.length+')</h3>'+wrongs.map(function(w){
+      return'<div class="review-item"><span class="review-icon">❌</span><div class="review-q">Q'+(w.i+1)+': '+w.q.q+'</div><div class="review-ans wrong">You: '+(w.a||'—')+' | Correct: <span class="correct-ans">'+w.q.a+'</span></div></div>';
+    }).join('');
+  }
+}
+
+function backToSelector(){
+  document.getElementById('selector').style.display='block';
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+}
+</script>
+</body>
+</html>
