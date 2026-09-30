@@ -19,6 +19,6 @@
 
 <hr>
 
-<p><a href="https://khalidalameer.github.io/HIT-THE-90s-alcpt-prep/book7/">👉 اضغط هنا لبدء الاختبارات التفاعلية</a></p>
+<p><a href="https://khalidalameer.github.io/HIT-THE-90s-alcpt-prep/book7/index.html">👉 اضغط هنا لبدء الاختبارات التفاعلية</a></p>
 
 </div>
