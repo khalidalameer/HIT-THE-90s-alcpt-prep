@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hit the 60s — Book 9</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--navy:#1F3864;--blue:#2E75B6;--red:#C00000;--green:#00B050;--gold:#F4A800;--bg:#F0F4FA;--card:#FFFFFF;--text:#1a1a2e;--muted:#6B7280;--border:#E2E8F0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:var(--navy);padding:16px 20px;display:flex;align-items:center;gap:12px;}
+.logo-badge{background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;padding:4px 10px;border-radius:6px;}
+header h1{color:#fff;font-size:18px;font-weight:700;}
+header span{color:#94A3B8;font-size:13px;margin-left:auto;}
+.container{max-width:680px;margin:0 auto;padding:24px 16px 60px;}
+#selector{text-align:center;padding:40px 20px;}
+#selector h2{font-size:26px;font-weight:800;color:var(--navy);margin-bottom:6px;}
+#selector p{color:var(--muted);font-size:14px;margin-bottom:32px;}
+.test-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:400px;margin:0 auto;}
+.test-btn{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:18px 8px;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.test-btn:hover{border-color:var(--blue);background:#EEF4FF;transform:translateY(-2px);}
+.test-btn .num{font-size:24px;font-weight:800;color:var(--navy);}
+.test-btn .lbl{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+#quiz{display:none;}
+.quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--blue);font-size:14px;font-weight:600;padding:6px 0;}
+.quiz-title{font-size:18px;font-weight:800;color:var(--navy);}
+.quiz-sub{font-size:12px;color:var(--muted);margin-left:auto;}
+.progress-wrap{background:var(--border);border-radius:99px;height:6px;margin-bottom:24px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--navy));border-radius:99px;transition:width 0.4s ease;}
+.q-card{background:var(--card);border-radius:16px;padding:28px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:16px;}
+.q-num{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.q-text{font-size:17px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:24px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice{display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.18s;background:#FAFBFC;}
+.choice:hover:not(.locked){border-color:var(--blue);background:#EEF4FF;}
+.choice-letter{width:32px;height:32px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--muted);flex-shrink:0;}
+.choice-text{font-size:15px;color:var(--text);flex:1;}
+.choice.correct{border-color:var(--green);background:#F0FDF4;}
+.choice.correct .choice-letter{background:var(--green);color:#fff;}
+.choice.wrong{border-color:var(--red);background:#FFF0F0;}
+.choice.wrong .choice-letter{background:var(--red);color:#fff;}
+.choice.selected{border-color:var(--blue);background:#EEF4FF;}
+.choice.selected .choice-letter{background:var(--blue);color:#fff;}
+.choice.locked{cursor:default;}
+.feedback{display:none;margin-top:14px;padding:12px 16px;border-radius:10px;font-size:14px;font-weight:600;}
+.feedback.correct-fb{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0;display:block;}
+.feedback.wrong-fb{background:#FFF0F0;color:var(--red);border:1px solid #FECACA;display:block;}
+.nav-row{display:flex;gap:10px;margin-top:6px;}
+.nav-btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.18s;}
+.nav-btn.primary{background:var(--navy);color:#fff;}
+.nav-btn.primary:hover{background:var(--blue);}
+.nav-btn.secondary{background:var(--border);color:var(--muted);}
+.nav-btn.secondary:hover{background:#D1D5DB;color:var(--text);}
+.nav-btn:disabled{opacity:0.4;cursor:not-allowed;}
+#results{display:none;}
+.result-card{background:var(--card);border-radius:20px;padding:36px 24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:20px;}
+.result-emoji{font-size:60px;margin-bottom:16px;display:block;}
+.result-score{font-size:56px;font-weight:800;line-height:1;margin-bottom:4px;}
+.result-score.pass{color:var(--green);}
+.result-score.fail{color:var(--red);}
+.result-label{font-size:14px;color:var(--muted);margin-bottom:16px;}
+.result-badge{display:inline-block;padding:8px 20px;border-radius:99px;font-size:15px;font-weight:700;margin-bottom:20px;}
+.result-badge.pass{background:#F0FDF4;color:var(--green);}
+.result-badge.fail{background:#FFF0F0;color:var(--red);}
+.result-msg{font-size:14px;color:var(--muted);line-height:1.6;}
+.review-list{background:var(--card);border-radius:16px;padding:20px;margin-bottom:20px;}
+.review-list h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;}
+.review-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.review-item:last-child{border-bottom:none;}
+.review-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.review-q{font-size:13px;color:var(--text);flex:1;}
+.review-ans{font-size:12px;font-weight:600;}
+.review-ans.wrong{color:var(--red);}
+.correct-ans{color:var(--green);}
+.result-actions{display:flex;flex-direction:column;gap:10px;}
+.action-btn{padding:15px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.18s;}
+.action-btn.primary{background:var(--navy);color:#fff;}
+.action-btn.primary:hover{background:var(--blue);}
+.action-btn.outline{background:none;border:2px solid var(--border);color:var(--muted);}
+.action-btn.outline:hover{border-color:var(--blue);color:var(--blue);}
+.page-footer{text-align:center;margin-top:40px;font-size:13px;color:#800020;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">HIT THE 60s</div>
+  <h1>Book 9 — Practice Tests</h1>
+  <span>ALC Prep Course</span>
+</header>
+<div class="container">
+  <div id="selector">
+    <h2>Book Nine</h2>
+    <p>Choose a test to begin. Pass score: 24 / 30</p>
+    <div class="test-grid" id="testGrid"></div>
+  </div>
+  <div id="quiz">
+    <div class="quiz-header">
+      <button class="back-btn" id="backBtn">← Back</button>
+      <span class="quiz-title" id="quizTitle"></span>
+      <span class="quiz-sub">Pass: 24/30</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="q-card">
+      <div class="q-num" id="qNum"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn secondary" id="prevBtn">← Prev</button>
+      <button class="nav-btn primary" id="nextBtn">Next →</button>
+    </div>
+  </div>
+  <div id="results">
+    <div class="result-card">
+      <span class="result-emoji" id="resultEmoji"></span>
+      <div class="result-score" id="resultScore"></div>
+      <div class="result-label">out of 30 questions</div>
+      <div class="result-badge" id="resultBadge"></div>
+      <div class="result-msg" id="resultMsg"></div>
+    </div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="result-actions">
+      <button class="action-btn primary" id="retryBtn">🔄 Try Again</button>
+      <button class="action-btn outline" id="backBtn2">← Choose Another Test</button>
+    </div>
+  </div>
+  <div class="page-footer">
+    <div>Prepared by Khalid Alameer &nbsp;|&nbsp; Western Naval Aviation Group &nbsp;|</div>
+    <div style="text-align:center;font-size:14px;font-weight:700;margin-top:6px;">"Hit the 90s"</div>
+  </div>
+</div>
+<script>
+var BOOK_TITLE="Book 9";
+var TESTS=[{"title":"Test 1","questions":[{"q":"I'd like to ______ a bank account.","ch":["A) close","B) open","C) cash","D) withdraw"],"a":"B"},{"q":"Please ______ this withdrawal slip.","ch":["A) spend","B) save","C) fill out","D) hide"],"a":"C"},{"q":"I'd like to ______ $200 from my account.","ch":["A) deposit","B) save","C) cash","D) withdraw"],"a":"D"},{"q":"The lemon ______ sour.","ch":["A) smells","B) sounds","C) feels","D) tastes"],"a":"D"},{"q":"The coffee ______ delicious.","ch":["A) tastes","B) sounds","C) smells","D) feels"],"a":"C"},{"q":"That ______ like a good idea.","ch":["A) tastes","B) smells","C) sounds","D) feels"],"a":"C"},{"q":"I ______ driving to Dallas tomorrow.","ch":["A) will","B) am","C) going","D) be"],"a":"B"},{"q":"She's saving money ______ she wants to travel.","ch":["A) but","B) or","C) because","D) and"],"a":"D"},{"q":"Betty ______ studying in the library last night.","ch":["A) is","B) are","C) was","D) were"],"a":"C"},{"q":"What ______ you doing at 0800?","ch":["A) is","B) are","C) was","D) were"],"a":"C"},{"q":"Ask Sgt. Winters ______ come to my office.","ch":["A) for","B) to","C) at","D) in"],"a":"D"},{"q":"Ken told Mike ______ turn off the light.","ch":["A) for","B) at","C) to","D) in"],"a":"B"},{"q":"Our jackets are ______ to each other.","ch":["A) same","B) different","C) similar","D) like"],"a":"C"},{"q":"His car is the ______ as mine.","ch":["A) similar","B) same","C) like","D) alike"],"a":"C"},{"q":"What ______ I do?  —  You should wait.","ch":["A) could","B) would","C) should","D) must"],"a":"B"},{"q":"You ______ leave now. Wait.","ch":["A) should","B) shouldn't","C) could","D) couldn't"],"a":"C"},{"q":"He drives ______. He follows the rules.","ch":["A) careful","B) careless","C) carefully","D) carelessly"],"a":"B"},{"q":"How does she drive?  —  She drives ______.","ch":["A) slow","B) slowly","C) slowness","D) slowed"],"a":"C"},{"q":"I'm sorry ______ I broke the chair.","ch":["A) which","B) what","C) who","D) that"],"a":"C"},{"q":"He apologized ______ being late.","ch":["A) to","B) for","C) at","D) in"],"a":"B"},{"q":"Black coffee tastes ______.","ch":["A) sweet","B) salty","C) sour","D) bitter"],"a":"D"},{"q":"The candy tastes ______.","ch":["A) bitter","B) sour","C) sweet","D) salty"],"a":"B"},{"q":"She ______ $500 into her savings account.","ch":["A) withdrew","B) spent","C) deposited","D) cashed"],"a":"B"},{"q":"He ______ the red light and got a fine.","ch":["A) rode","B) crossed","C) ran","D) kept"],"a":"C"},{"q":"Always ______ your seat belt.","ch":["A) obey","B) fasten","C) cross","D) cause"],"a":"D"},{"q":"She apologized ______ spilling the coffee.","ch":["A) to","B) at","C) for","D) in"],"a":"C"},{"q":"I think ______ the weather's nice.","ch":["A) which","B) that","C) what","D) who"],"a":"B"},{"q":"He ______ his wallet at the airport.","ch":["A) hide","B) lost","C) spend","D) save"],"a":"C"},{"q":"He ______ during an accident on the highway.","ch":["A) apologized","B) drove","C) tasted","D) withdrew"],"a":"C"},{"q":"You ______ call a taxi.","ch":["A) should","B) must","C) could","D) have to"],"a":"B"}]},{"title":"Test 2","questions":[{"q":"I'd like to ______ a bank account.","ch":["A) close","B) open","C) cash","D) withdraw"],"a":"C"},{"q":"Please ______ this withdrawal slip.","ch":["A) spend","B) save","C) fill out","D) hide"],"a":"D"},{"q":"I'd like to ______ $200 from my account.","ch":["A) deposit","B) save","C) cash","D) withdraw"],"a":"B"},{"q":"The lemon ______ sour.","ch":["A) smells","B) sounds","C) feels","D) tastes"],"a":"C"},{"q":"The coffee ______ delicious.","ch":["A) tastes","B) sounds","C) smells","D) feels"],"a":"C"},{"q":"That ______ like a good idea.","ch":["A) tastes","B) smells","C) sounds","D) feels"],"a":"B"},{"q":"I ______ driving to Dallas tomorrow.","ch":["A) will","B) am","C) going","D) be"],"a":"A"},{"q":"She's saving money ______ she wants to travel.","ch":["A) but","B) or","C) because","D) and"],"a":"C"},{"q":"Betty ______ studying in the library last night.","ch":["A) is","B) are","C) was","D) were"],"a":"C"},{"q":"What ______ you doing at 0800?","ch":["A) is","B) are","C) was","D) were"],"a":"A"},{"q":"Ask Sgt. Winters ______ come to my office.","ch":["A) for","B) to","C) at","D) in"],"a":"B"},{"q":"Ken told Mike ______ turn off the light.","ch":["A) for","B) at","C) to","D) in"],"a":"C"},{"q":"Our jackets are ______ to each other.","ch":["A) same","B) different","C) similar","D) like"],"a":"D"},{"q":"His car is the ______ as mine.","ch":["A) similar","B) same","C) like","D) alike"],"a":"B"},{"q":"What ______ I do?  —  You should wait.","ch":["A) could","B) would","C) should","D) must"],"a":"C"},{"q":"You ______ leave now. Wait.","ch":["A) should","B) shouldn't","C) could","D) couldn't"],"a":"C"},{"q":"He drives ______. He follows the rules.","ch":["A) careful","B) careless","C) carefully","D) carelessly"],"a":"C"},{"q":"How does she drive?  —  She drives ______.","ch":["A) slow","B) slowly","C) slowness","D) slowed"],"a":"C"},{"q":"I'm sorry ______ I broke the chair.","ch":["A) which","B) what","C) who","D) that"],"a":"C"},{"q":"He apologized ______ being late.","ch":["A) to","B) for","C) at","D) in"],"a":"D"},{"q":"Black coffee tastes ______.","ch":["A) sweet","B) salty","C) sour","D) bitter"],"a":"B"},{"q":"The candy tastes ______.","ch":["A) bitter","B) sour","C) sweet","D) salty"],"a":"C"},{"q":"She ______ $500 into her savings account.","ch":["A) withdrew","B) spent","C) deposited","D) cashed"],"a":"B"},{"q":"He ______ the red light and got a fine.","ch":["A) rode","B) crossed","C) ran","D) kept"],"a":"C"},{"q":"Always ______ your seat belt.","ch":["A) obey","B) fasten","C) cross","D) cause"],"a":"B"},{"q":"She apologized ______ spilling the coffee.","ch":["A) to","B) at","C) for","D) in"],"a":"C"},{"q":"I think ______ the weather's nice.","ch":["A) which","B) that","C) what","D) who"],"a":"C"},{"q":"He ______ his wallet at the airport.","ch":["A) hide","B) lost","C) spend","D) save"],"a":"B"},{"q":"He ______ during an accident on the highway.","ch":["A) apologized","B) drove","C) tasted","D) withdrew"],"a":"C"},{"q":"You ______ call a taxi.","ch":["A) should","B) must","C) could","D) have to"],"a":"B"}]},{"title":"Test 3","questions":[{"q":"I'd like to ______ a bank account.","ch":["A) close","B) open","C) cash","D) withdraw"],"a":"C"},{"q":"Please ______ this withdrawal slip.","ch":["A) spend","B) save","C) fill out","D) hide"],"a":"A"},{"q":"I'd like to ______ $200 from my account.","ch":["A) deposit","B) save","C) cash","D) withdraw"],"a":"C"},{"q":"The lemon ______ sour.","ch":["A) smells","B) sounds","C) feels","D) tastes"],"a":"B"},{"q":"The coffee ______ delicious.","ch":["A) tastes","B) sounds","C) smells","D) feels"],"a":"A"},{"q":"That ______ like a good idea.","ch":["A) tastes","B) smells","C) sounds","D) feels"],"a":"C"},{"q":"I ______ driving to Dallas tomorrow.","ch":["A) will","B) am","C) going","D) be"],"a":"D"},{"q":"She's saving money ______ she wants to travel.","ch":["A) but","B) or","C) because","D) and"],"a":"B"},{"q":"Betty ______ studying in the library last night.","ch":["A) is","B) are","C) was","D) were"],"a":"B"},{"q":"What ______ you doing at 0800?","ch":["A) is","B) are","C) was","D) were"],"a":"D"},{"q":"Ask Sgt. Winters ______ come to my office.","ch":["A) for","B) to","C) at","D) in"],"a":"C"},{"q":"Ken told Mike ______ turn off the light.","ch":["A) for","B) at","C) to","D) in"],"a":"C"},{"q":"Our jackets are ______ to each other.","ch":["A) same","B) different","C) similar","D) like"],"a":"D"},{"q":"His car is the ______ as mine.","ch":["A) similar","B) same","C) like","D) alike"],"a":"B"},{"q":"What ______ I do?  —  You should wait.","ch":["A) could","B) would","C) should","D) must"],"a":"C"},{"q":"You ______ leave now. Wait.","ch":["A) should","B) shouldn't","C) could","D) couldn't"],"a":"C"},{"q":"He drives ______. He follows the rules.","ch":["A) careful","B) careless","C) carefully","D) carelessly"],"a":"B"},{"q":"How does she drive?  —  She drives ______.","ch":["A) slow","B) slowly","C) slowness","D) slowed"],"a":"C"},{"q":"I'm sorry ______ I broke the chair.","ch":["A) which","B) what","C) who","D) that"],"a":"B"},{"q":"He apologized ______ being late.","ch":["A) to","B) for","C) at","D) in"],"a":"C"},{"q":"Black coffee tastes ______.","ch":["A) sweet","B) salty","C) sour","D) bitter"],"a":"B"},{"q":"The candy tastes ______.","ch":["A) bitter","B) sour","C) sweet","D) salty"],"a":"D"},{"q":"She ______ $500 into her savings account.","ch":["A) withdrew","B) spent","C) deposited","D) cashed"],"a":"C"},{"q":"He ______ the red light and got a fine.","ch":["A) rode","B) crossed","C) ran","D) kept"],"a":"C"},{"q":"Always ______ your seat belt.","ch":["A) obey","B) fasten","C) cross","D) cause"],"a":"D"},{"q":"She apologized ______ spilling the coffee.","ch":["A) to","B) at","C) for","D) in"],"a":"C"},{"q":"I think ______ the weather's nice.","ch":["A) which","B) that","C) what","D) who"],"a":"B"},{"q":"He ______ his wallet at the airport.","ch":["A) hide","B) lost","C) spend","D) save"],"a":"C"},{"q":"He ______ during an accident on the highway.","ch":["A) apologized","B) drove","C) tasted","D) withdrew"],"a":"B"},{"q":"You ______ call a taxi.","ch":["A) should","B) must","C) could","D) have to"],"a":"C"}]},{"title":"Test 4","questions":[{"q":"I'd like to ______ a bank account.","ch":["A) close","B) open","C) cash","D) withdraw"],"a":"B"},{"q":"Please ______ this withdrawal slip.","ch":["A) spend","B) save","C) fill out","D) hide"],"a":"A"},{"q":"I'd like to ______ $200 from my account.","ch":["A) deposit","B) save","C) cash","D) withdraw"],"a":"D"},{"q":"The lemon ______ sour.","ch":["A) smells","B) sounds","C) feels","D) tastes"],"a":"D"},{"q":"The coffee ______ delicious.","ch":["A) tastes","B) sounds","C) smells","D) feels"],"a":"D"},{"q":"That ______ like a good idea.","ch":["A) tastes","B) smells","C) sounds","D) feels"],"a":"B"},{"q":"I ______ driving to Dallas tomorrow.","ch":["A) will","B) am","C) going","D) be"],"a":"C"},{"q":"She's saving money ______ she wants to travel.","ch":["A) but","B) or","C) because","D) and"],"a":"C"},{"q":"Betty ______ studying in the library last night.","ch":["A) is","B) are","C) was","D) were"],"a":"C"},{"q":"What ______ you doing at 0800?","ch":["A) is","B) are","C) was","D) were"],"a":"D"},{"q":"Ask Sgt. Winters ______ come to my office.","ch":["A) for","B) to","C) at","D) in"],"a":"B"},{"q":"Ken told Mike ______ turn off the light.","ch":["A) for","B) at","C) to","D) in"],"a":"C"},{"q":"Our jackets are ______ to each other.","ch":["A) same","B) different","C) similar","D) like"],"a":"C"},{"q":"His car is the ______ as mine.","ch":["A) similar","B) same","C) like","D) alike"],"a":"B"},{"q":"What ______ I do?  —  You should wait.","ch":["A) could","B) would","C) should","D) must"],"a":"C"},{"q":"You ______ leave now. Wait.","ch":["A) should","B) shouldn't","C) could","D) couldn't"],"a":"B"},{"q":"He drives ______. He follows the rules.","ch":["A) careful","B) careless","C) carefully","D) carelessly"],"a":"C"},{"q":"How does she drive?  —  She drives ______.","ch":["A) slow","B) slowly","C) slowness","D) slowed"],"a":"C"},{"q":"I'm sorry ______ I broke the chair.","ch":["A) which","B) what","C) who","D) that"],"a":"B"},{"q":"He apologized ______ being late.","ch":["A) to","B) for","C) at","D) in"],"a":"D"},{"q":"Black coffee tastes ______.","ch":["A) sweet","B) salty","C) sour","D) bitter"],"a":"C"},{"q":"The candy tastes ______.","ch":["A) bitter","B) sour","C) sweet","D) salty"],"a":"C"},{"q":"She ______ $500 into her savings account.","ch":["A) withdrew","B) spent","C) deposited","D) cashed"],"a":"D"},{"q":"He ______ the red light and got a fine.","ch":["A) rode","B) crossed","C) ran","D) kept"],"a":"D"},{"q":"Always ______ your seat belt.","ch":["A) obey","B) fasten","C) cross","D) cause"],"a":"B"},{"q":"She apologized ______ spilling the coffee.","ch":["A) to","B) at","C) for","D) in"],"a":"B"},{"q":"I think ______ the weather's nice.","ch":["A) which","B) that","C) what","D) who"],"a":"C"},{"q":"He ______ his wallet at the airport.","ch":["A) hide","B) lost","C) spend","D) save"],"a":"B"},{"q":"He ______ during an accident on the highway.","ch":["A) apologized","B) drove","C) tasted","D) withdrew"],"a":"C"},{"q":"You ______ call a taxi.","ch":["A) should","B) must","C) could","D) have to"],"a":"A"}]},{"title":"Test 5","questions":[{"q":"I'd like to ______ a bank account.","ch":["A) close","B) open","C) cash","D) withdraw"],"a":"B"},{"q":"Please ______ this withdrawal slip.","ch":["A) spend","B) save","C) fill out","D) hide"],"a":"D"},{"q":"I'd like to ______ $200 from my account.","ch":["A) deposit","B) save","C) cash","D) withdraw"],"a":"D"},{"q":"The lemon ______ sour.","ch":["A) smells","B) sounds","C) feels","D) tastes"],"a":"B"},{"q":"The coffee ______ delicious.","ch":["A) tastes","B) sounds","C) smells","D) feels"],"a":"C"},{"q":"That ______ like a good idea.","ch":["A) tastes","B) smells","C) sounds","D) feels"],"a":"C"},{"q":"I ______ driving to Dallas tomorrow.","ch":["A) will","B) am","C) going","D) be"],"a":"B"},{"q":"She's saving money ______ she wants to travel.","ch":["A) but","B) or","C) because","D) and"],"a":"C"},{"q":"Betty ______ studying in the library last night.","ch":["A) is","B) are","C) was","D) were"],"a":"B"},{"q":"What ______ you doing at 0800?","ch":["A) is","B) are","C) was","D) were"],"a":"C"},{"q":"Ask Sgt. Winters ______ come to my office.","ch":["A) for","B) to","C) at","D) in"],"a":"C"},{"q":"Ken told Mike ______ turn off the light.","ch":["A) for","B) at","C) to","D) in"],"a":"B"},{"q":"Our jackets are ______ to each other.","ch":["A) same","B) different","C) similar","D) like"],"a":"C"},{"q":"His car is the ______ as mine.","ch":["A) similar","B) same","C) like","D) alike"],"a":"C"},{"q":"What ______ I do?  —  You should wait.","ch":["A) could","B) would","C) should","D) must"],"a":"B"},{"q":"You ______ leave now. Wait.","ch":["A) should","B) shouldn't","C) could","D) couldn't"],"a":"D"},{"q":"He drives ______. He follows the rules.","ch":["A) careful","B) careless","C) carefully","D) carelessly"],"a":"B"},{"q":"How does she drive?  —  She drives ______.","ch":["A) slow","B) slowly","C) slowness","D) slowed"],"a":"C"},{"q":"I'm sorry ______ I broke the chair.","ch":["A) which","B) what","C) who","D) that"],"a":"D"},{"q":"He apologized ______ being late.","ch":["A) to","B) for","C) at","D) in"],"a":"D"},{"q":"Black coffee tastes ______.","ch":["A) sweet","B) salty","C) sour","D) bitter"],"a":"B"},{"q":"The candy tastes ______.","ch":["A) bitter","B) sour","C) sweet","D) salty"],"a":"C"},{"q":"She ______ $500 into her savings account.","ch":["A) withdrew","B) spent","C) deposited","D) cashed"],"a":"C"},{"q":"He ______ the red light and got a fine.","ch":["A) rode","B) crossed","C) ran","D) kept"],"a":"B"},{"q":"Always ______ your seat belt.","ch":["A) obey","B) fasten","C) cross","D) cause"],"a":"B"},{"q":"She apologized ______ spilling the coffee.","ch":["A) to","B) at","C) for","D) in"],"a":"D"},{"q":"I think ______ the weather's nice.","ch":["A) which","B) that","C) what","D) who"],"a":"C"},{"q":"He ______ his wallet at the airport.","ch":["A) hide","B) lost","C) spend","D) save"],"a":"C"},{"q":"He ______ during an accident on the highway.","ch":["A) apologized","B) drove","C) tasted","D) withdrew"],"a":"B"},{"q":"You ______ call a taxi.","ch":["A) should","B) must","C) could","D) have to"],"a":"B"}]}];
+var currentTest=0,currentQ=0,answers=[],answered=[];
+
+// Build test grid buttons
+var grid=document.getElementById('testGrid');
+for(var i=0;i<TESTS.length;i++){
+  var btn=document.createElement('div');
+  btn.className='test-btn';
+  btn.innerHTML='<span class="num">'+(i+1)+'</span><span class="lbl">Test</span>';
+  (function(idx){btn.addEventListener('click',function(){startTest(idx);});})(i);
+  grid.appendChild(btn);
+}
+
+// Button event listeners
+document.getElementById('backBtn').addEventListener('click',backToSelector);
+document.getElementById('backBtn2').addEventListener('click',backToSelector);
+document.getElementById('prevBtn').addEventListener('click',prevQ);
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('retryBtn').addEventListener('click',function(){startTest(currentTest);});
+
+function startTest(idx){
+  currentTest=idx;currentQ=0;
+  answers=new Array(30).fill(null);
+  answered=new Array(30).fill(false);
+  document.getElementById('selector').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quizTitle').textContent=BOOK_TITLE+' — '+TESTS[idx].title;
+  renderQ();
+}
+
+function renderQ(){
+  var test=TESTS[currentTest];
+  var q=test.questions[currentQ];
+  var total=test.questions.length;
+  document.getElementById('qNum').textContent='Question '+(currentQ+1)+' of '+total;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('progressFill').style.width=(((currentQ+1)/total)*100)+'%';
+  var fb=document.getElementById('feedback');
+  fb.className='feedback';fb.textContent='';
+  var choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  q.ch.forEach(function(choice,i){
+    var letter=['A','B','C','D'][i];
+    var div=document.createElement('div');
+    div.className='choice';
+    if(answered[currentQ])div.classList.add('locked');
+    var userAns=answers[currentQ];
+    if(answered[currentQ]){
+      if(letter===q.a)div.classList.add('correct');
+      else if(letter===userAns&&userAns!==q.a)div.classList.add('wrong');
+    }else if(userAns===letter){div.classList.add('selected');}
+    div.innerHTML='<div class="choice-letter">'+letter+'</div><div class="choice-text">'+choice.substring(3)+'</div>';
+    if(!answered[currentQ]){
+      (function(l){div.addEventListener('click',function(){selectAnswer(l);});})(letter);
+    }
+    choicesEl.appendChild(div);
+  });
+  if(answered[currentQ]){
+    var correct=answers[currentQ]===q.a;
+    fb.className='feedback '+(correct?'correct-fb':'wrong-fb');
+    fb.textContent=correct?'✓ Correct!':'✗ Wrong. The correct answer is '+q.a+'.';
+  }
+  document.getElementById('prevBtn').disabled=currentQ===0;
+  document.getElementById('nextBtn').textContent=currentQ===TESTS[currentTest].questions.length-1?'Finish ✓':'Next →';
+}
+
+function selectAnswer(letter){
+  if(answered[currentQ])return;
+  answers[currentQ]=letter;answered[currentQ]=true;renderQ();
+}
+
+function nextQ(){
+  if(!answered[currentQ]){alert('Please choose an answer first.');return;}
+  if(currentQ<TESTS[currentTest].questions.length-1){currentQ++;renderQ();}
+  else{showResults();}
+}
+
+function prevQ(){if(currentQ>0){currentQ--;renderQ();}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  var test=TESTS[currentTest];var score=0;
+  answers.forEach(function(a,i){if(a===test.questions[i].a)score++;});
+  var pass=score>=24;
+  document.getElementById('resultEmoji').textContent=pass?'🎯':'📚';
+  document.getElementById('resultScore').textContent=score+'/30';
+  document.getElementById('resultScore').className='result-score '+(pass?'pass':'fail');
+  var badge=document.getElementById('resultBadge');
+  badge.textContent=pass?'✅ PASSED':'❌ NOT PASSED';
+  badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultMsg').textContent=pass?'Excellent! You scored '+score+' out of 30. Keep it up!':'You scored '+score+' out of 30. You need 24 to pass. Review your mistakes and try again!';
+  var reviewList=document.getElementById('reviewList');
+  var wrongs=answers.map(function(a,i){return{i:i,a:a,correct:a===test.questions[i].a,q:test.questions[i]};}).filter(function(x){return!x.correct;});
+  if(wrongs.length===0){
+    reviewList.innerHTML='<h3>Review</h3><p style="color:var(--green);font-size:14px;padding:10px 0">🎉 Perfect score! No mistakes.</p>';
+  }else{
+    reviewList.innerHTML='<h3>Mistakes to Review ('+wrongs.length+')</h3>'+wrongs.map(function(w){
+      return'<div class="review-item"><span class="review-icon">❌</span><div class="review-q">Q'+(w.i+1)+': '+w.q.q+'</div><div class="review-ans wrong">You: '+(w.a||'—')+' | Correct: <span class="correct-ans">'+w.q.a+'</span></div></div>';
+    }).join('');
+  }
+}
+
+function backToSelector(){
+  document.getElementById('selector').style.display='block';
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+}
+</script>
+</body>
+</html>
