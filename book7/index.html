@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hit the 60s — Book 7</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--navy:#1F3864;--blue:#2E75B6;--red:#C00000;--green:#00B050;--gold:#F4A800;--bg:#F0F4FA;--card:#FFFFFF;--text:#1a1a2e;--muted:#6B7280;--border:#E2E8F0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+header{background:var(--navy);padding:16px 20px;display:flex;align-items:center;gap:12px;}
+.logo-badge{background:var(--gold);color:var(--navy);font-weight:800;font-size:13px;padding:4px 10px;border-radius:6px;}
+header h1{color:#fff;font-size:18px;font-weight:700;}
+header span{color:#94A3B8;font-size:13px;margin-left:auto;}
+.container{max-width:680px;margin:0 auto;padding:24px 16px 60px;}
+#selector{text-align:center;padding:40px 20px;}
+#selector h2{font-size:26px;font-weight:800;color:var(--navy);margin-bottom:6px;}
+#selector p{color:var(--muted);font-size:14px;margin-bottom:32px;}
+.test-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:400px;margin:0 auto;}
+.test-btn{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:18px 8px;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.test-btn:hover{border-color:var(--blue);background:#EEF4FF;transform:translateY(-2px);}
+.test-btn .num{font-size:24px;font-weight:800;color:var(--navy);}
+.test-btn .lbl{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.5px;}
+#quiz{display:none;}
+.quiz-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--blue);font-size:14px;font-weight:600;padding:6px 0;}
+.quiz-title{font-size:18px;font-weight:800;color:var(--navy);}
+.quiz-sub{font-size:12px;color:var(--muted);margin-left:auto;}
+.progress-wrap{background:var(--border);border-radius:99px;height:6px;margin-bottom:24px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--navy));border-radius:99px;transition:width 0.4s ease;}
+.q-card{background:var(--card);border-radius:16px;padding:28px 24px;box-shadow:0 2px 12px rgba(0,0,0,0.06);margin-bottom:16px;}
+.q-num{font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
+.q-text{font-size:17px;font-weight:600;color:var(--text);line-height:1.5;margin-bottom:24px;}
+.choices{display:flex;flex-direction:column;gap:10px;}
+.choice{display:flex;align-items:center;gap:14px;padding:14px 16px;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.18s;background:#FAFBFC;}
+.choice:hover:not(.locked){border-color:var(--blue);background:#EEF4FF;}
+.choice-letter{width:32px;height:32px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--muted);flex-shrink:0;}
+.choice-text{font-size:15px;color:var(--text);flex:1;}
+.choice.correct{border-color:var(--green);background:#F0FDF4;}
+.choice.correct .choice-letter{background:var(--green);color:#fff;}
+.choice.wrong{border-color:var(--red);background:#FFF0F0;}
+.choice.wrong .choice-letter{background:var(--red);color:#fff;}
+.choice.selected{border-color:var(--blue);background:#EEF4FF;}
+.choice.selected .choice-letter{background:var(--blue);color:#fff;}
+.choice.locked{cursor:default;}
+.feedback{display:none;margin-top:14px;padding:12px 16px;border-radius:10px;font-size:14px;font-weight:600;}
+.feedback.correct-fb{background:#F0FDF4;color:var(--green);border:1px solid #BBF7D0;display:block;}
+.feedback.wrong-fb{background:#FFF0F0;color:var(--red);border:1px solid #FECACA;display:block;}
+.nav-row{display:flex;gap:10px;margin-top:6px;}
+.nav-btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.18s;}
+.nav-btn.primary{background:var(--navy);color:#fff;}
+.nav-btn.primary:hover{background:var(--blue);}
+.nav-btn.secondary{background:var(--border);color:var(--muted);}
+.nav-btn.secondary:hover{background:#D1D5DB;color:var(--text);}
+.nav-btn:disabled{opacity:0.4;cursor:not-allowed;}
+#results{display:none;}
+.result-card{background:var(--card);border-radius:20px;padding:36px 24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);margin-bottom:20px;}
+.result-emoji{font-size:60px;margin-bottom:16px;display:block;}
+.result-score{font-size:56px;font-weight:800;line-height:1;margin-bottom:4px;}
+.result-score.pass{color:var(--green);}
+.result-score.fail{color:var(--red);}
+.result-label{font-size:14px;color:var(--muted);margin-bottom:16px;}
+.result-badge{display:inline-block;padding:8px 20px;border-radius:99px;font-size:15px;font-weight:700;margin-bottom:20px;}
+.result-badge.pass{background:#F0FDF4;color:var(--green);}
+.result-badge.fail{background:#FFF0F0;color:var(--red);}
+.result-msg{font-size:14px;color:var(--muted);line-height:1.6;}
+.review-list{background:var(--card);border-radius:16px;padding:20px;margin-bottom:20px;}
+.review-list h3{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;}
+.review-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.review-item:last-child{border-bottom:none;}
+.review-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.review-q{font-size:13px;color:var(--text);flex:1;}
+.review-ans{font-size:12px;font-weight:600;}
+.review-ans.wrong{color:var(--red);}
+.correct-ans{color:var(--green);}
+.result-actions{display:flex;flex-direction:column;gap:10px;}
+.action-btn{padding:15px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.18s;}
+.action-btn.primary{background:var(--navy);color:#fff;}
+.action-btn.primary:hover{background:var(--blue);}
+.action-btn.outline{background:none;border:2px solid var(--border);color:var(--muted);}
+.action-btn.outline:hover{border-color:var(--blue);color:var(--blue);}
+.page-footer{text-align:center;margin-top:40px;font-size:13px;color:#800020;font-weight:700;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo-badge">HIT THE 60s</div>
+  <h1>Book 7 — Practice Tests</h1>
+  <span>ALC Prep Course</span>
+</header>
+<div class="container">
+  <div id="selector">
+    <h2>Book Seven</h2>
+    <p>Choose a test to begin. Pass score: 24 / 30</p>
+    <div class="test-grid" id="testGrid"></div>
+  </div>
+  <div id="quiz">
+    <div class="quiz-header">
+      <button class="back-btn" id="backBtn">← Back</button>
+      <span class="quiz-title" id="quizTitle"></span>
+      <span class="quiz-sub">Pass: 24/30</span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="q-card">
+      <div class="q-num" id="qNum"></div>
+      <div class="q-text" id="qText"></div>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn secondary" id="prevBtn">← Prev</button>
+      <button class="nav-btn primary" id="nextBtn">Next →</button>
+    </div>
+  </div>
+  <div id="results">
+    <div class="result-card">
+      <span class="result-emoji" id="resultEmoji"></span>
+      <div class="result-score" id="resultScore"></div>
+      <div class="result-label">out of 30 questions</div>
+      <div class="result-badge" id="resultBadge"></div>
+      <div class="result-msg" id="resultMsg"></div>
+    </div>
+    <div class="review-list" id="reviewList"></div>
+    <div class="result-actions">
+      <button class="action-btn primary" id="retryBtn">🔄 Try Again</button>
+      <button class="action-btn outline" id="backBtn2">← Choose Another Test</button>
+    </div>
+  </div>
+  <div class="page-footer">
+    <div>Prepared by Khalid Alameer &nbsp;|&nbsp; Western Naval Aviation Group &nbsp;|</div>
+    <div style="text-align:center;font-size:14px;font-weight:700;margin-top:6px;">"Hit the 90s"</div>
+  </div>
+</div>
+<script>
+var BOOK_TITLE="Book 7";
+var TESTS=[{"title":"Test 1","questions":[{"q":"A ______ has three sides.","ch":["A) square","B) rectangle","C) circle","D) triangle"],"a":"D"},{"q":"A ______ has four equal sides.","ch":["A) triangle","B) rectangle","C) square","D) circle"],"a":"C"},{"q":"Draw a dot in the ______ of the circle.","ch":["A) top","B) bottom","C) edge","D) center"],"a":"D"},{"q":"He ______ a circle on the board.","ch":["A) draw","B) draws","C) drew","D) drawing"],"a":"C"},{"q":"The two shapes look ______.","ch":["A) different","B) opposite","C) alike","D) narrow"],"a":"C"},{"q":"He visited France and England. He liked ______ countries.","ch":["A) other","B) some","C) any","D) both"],"a":"D"},{"q":"My country is ______ than yours.","ch":["A) hot","B) more hot","C) hotter","D) hottest"],"a":"C"},{"q":"This rectangle is ______ than that one.","ch":["A) wide","B) more wide","C) widest","D) wider"],"a":"D"},{"q":"Do you have ______ coffee?","ch":["A) any","B) some","C) both","D) other"],"a":"A"},{"q":"No, I don't have ______ sugar.","ch":["A) some","B) both","C) any","D) other"],"a":"C"},{"q":"Do you want juice or coffee?  —  I'd like ______, please.","ch":["A) other","B) any","C) some","D) both"],"a":"D"},{"q":"One pen is mine; ______ is my brother's.","ch":["A) both","B) the other","C) any","D) some"],"a":"B"},{"q":"How ______ is the house?","ch":["A) long","B) much","C) old","D) many"],"a":"C"},{"q":"How old ______ Ahmed?","ch":["A) are","B) was","C) is","D) were"],"a":"C"},{"q":"Ahmed is ______ student in the class.","ch":["A) tall","B) taller","C) the tall","D) the tallest"],"a":"D"},{"q":"What do we use a stove ______?","ch":["A) to","B) for","C) at","D) in"],"a":"B"},{"q":"We use a stove ______ cook food.","ch":["A) for","B) at","C) to","D) in"],"a":"C"},{"q":"A circle has a ______ edge.","ch":["A) straight","B) narrow","C) curved","D) wide"],"a":"C"},{"q":"He is a ______ and strong soldier.","ch":["A) tall","B) tallest","C) taller","D) more tall"],"a":"A"},{"q":"This is the ______ problem on the test.","ch":["A) hard","B) harder","C) hardest","D) most hard"],"a":"C"},{"q":"English is ______ than math for me.","ch":["A) easy","B) easier","C) easiest","D) more easy"],"a":"B"},{"q":"5 + 3 = 8.  Five ______ three equals eight.","ch":["A) minus","B) times","C) plus","D) divided by"],"a":"C"},{"q":"The past of 'run' is ______.","ch":["A) runned","B) ran","C) run","D) runs"],"a":"B"},{"q":"10 ÷ 2 = 5.  Ten ______ two equals five.","ch":["A) plus","B) minus","C) times","D) divided by"],"a":"D"},{"q":"A rectangle is ______ and narrow.","ch":["A) fast","B) long","C) wide","D) curved"],"a":"B"},{"q":"He ______ a mistake on the test.","ch":["A) did","B) made","C) got","D) took"],"a":"B"},{"q":"Who has the ______ box?","ch":["A) small","B) smaller","C) smallest","D) most small"],"a":"C"},{"q":"I use this ______ cleaning the floor.","ch":["A) to","B) at","C) in","D) for"],"a":"D"},{"q":"He bought two books. He didn't read ______ book.","ch":["A) both","B) some","C) the other","D) any"],"a":"C"},{"q":"How old is the building?  —  It ______ built in 1980.","ch":["A) is","B) was","C) were","D) be"],"a":"B"}]},{"title":"Test 2","questions":[{"q":"A ______ has three sides.","ch":["A) square","B) rectangle","C) circle","D) triangle"],"a":"C"},{"q":"A ______ has four equal sides.","ch":["A) triangle","B) rectangle","C) square","D) circle"],"a":"C"},{"q":"Draw a dot in the ______ of the circle.","ch":["A) top","B) bottom","C) edge","D) center"],"a":"D"},{"q":"He ______ a circle on the board.","ch":["A) draw","B) draws","C) drew","D) drawing"],"a":"C"},{"q":"The two shapes look ______.","ch":["A) different","B) opposite","C) alike","D) narrow"],"a":"C"},{"q":"He visited France and England. He liked ______ countries.","ch":["A) other","B) some","C) any","D) both"],"a":"C"},{"q":"My country is ______ than yours.","ch":["A) hot","B) more hot","C) hotter","D) hottest"],"a":"D"},{"q":"This rectangle is ______ than that one.","ch":["A) wide","B) more wide","C) widest","D) wider"],"a":"C"},{"q":"Do you have ______ coffee?","ch":["A) any","B) some","C) both","D) other"],"a":"C"},{"q":"No, I don't have ______ sugar.","ch":["A) some","B) both","C) any","D) other"],"a":"C"},{"q":"Do you want juice or coffee?  —  I'd like ______, please.","ch":["A) other","B) any","C) some","D) both"],"a":"D"},{"q":"One pen is mine; ______ is my brother's.","ch":["A) both","B) the other","C) any","D) some"],"a":"B"},{"q":"How ______ is the house?","ch":["A) long","B) much","C) old","D) many"],"a":"C"},{"q":"How old ______ Ahmed?","ch":["A) are","B) was","C) is","D) were"],"a":"D"},{"q":"Ahmed is ______ student in the class.","ch":["A) tall","B) taller","C) the tall","D) the tallest"],"a":"B"},{"q":"What do we use a stove ______?","ch":["A) to","B) for","C) at","D) in"],"a":"C"},{"q":"We use a stove ______ cook food.","ch":["A) for","B) at","C) to","D) in"],"a":"C"},{"q":"A circle has a ______ edge.","ch":["A) straight","B) narrow","C) curved","D) wide"],"a":"B"},{"q":"He is a ______ and strong soldier.","ch":["A) tall","B) tallest","C) taller","D) more tall"],"a":"C"},{"q":"This is the ______ problem on the test.","ch":["A) hard","B) harder","C) hardest","D) most hard"],"a":"C"},{"q":"English is ______ than math for me.","ch":["A) easy","B) easier","C) easiest","D) more easy"],"a":"C"},{"q":"5 + 3 = 8.  Five ______ three equals eight.","ch":["A) minus","B) times","C) plus","D) divided by"],"a":"D"},{"q":"The past of 'run' is ______.","ch":["A) runned","B) ran","C) run","D) runs"],"a":"B"},{"q":"10 ÷ 2 = 5.  Ten ______ two equals five.","ch":["A) plus","B) minus","C) times","D) divided by"],"a":"C"},{"q":"A rectangle is ______ and narrow.","ch":["A) fast","B) long","C) wide","D) curved"],"a":"B"},{"q":"He ______ a mistake on the test.","ch":["A) did","B) made","C) got","D) took"],"a":"C"},{"q":"Who has the ______ box?","ch":["A) small","B) smaller","C) smallest","D) most small"],"a":"B"},{"q":"I use this ______ cleaning the floor.","ch":["A) to","B) at","C) in","D) for"],"a":"D"},{"q":"He bought two books. He didn't read ______ book.","ch":["A) both","B) some","C) the other","D) any"],"a":"C"},{"q":"How old is the building?  —  It ______ built in 1980.","ch":["A) is","B) was","C) were","D) be"],"a":"B"}]},{"title":"Test 3","questions":[{"q":"A ______ has three sides.","ch":["A) square","B) rectangle","C) circle","D) triangle"],"a":"B"},{"q":"A ______ has four equal sides.","ch":["A) triangle","B) rectangle","C) square","D) circle"],"a":"C"},{"q":"Draw a dot in the ______ of the circle.","ch":["A) top","B) bottom","C) edge","D) center"],"a":"D"},{"q":"He ______ a circle on the board.","ch":["A) draw","B) draws","C) drew","D) drawing"],"a":"D"},{"q":"The two shapes look ______.","ch":["A) different","B) opposite","C) alike","D) narrow"],"a":"B"},{"q":"He visited France and England. He liked ______ countries.","ch":["A) other","B) some","C) any","D) both"],"a":"A"},{"q":"My country is ______ than yours.","ch":["A) hot","B) more hot","C) hotter","D) hottest"],"a":"A"},{"q":"This rectangle is ______ than that one.","ch":["A) wide","B) more wide","C) widest","D) wider"],"a":"D"},{"q":"Do you have ______ coffee?","ch":["A) any","B) some","C) both","D) other"],"a":"B"},{"q":"No, I don't have ______ sugar.","ch":["A) some","B) both","C) any","D) other"],"a":"D"},{"q":"Do you want juice or coffee?  —  I'd like ______, please.","ch":["A) other","B) any","C) some","D) both"],"a":"C"},{"q":"One pen is mine; ______ is my brother's.","ch":["A) both","B) the other","C) any","D) some"],"a":"B"},{"q":"How ______ is the house?","ch":["A) long","B) much","C) old","D) many"],"a":"D"},{"q":"How old ______ Ahmed?","ch":["A) are","B) was","C) is","D) were"],"a":"B"},{"q":"Ahmed is ______ student in the class.","ch":["A) tall","B) taller","C) the tall","D) the tallest"],"a":"C"},{"q":"What do we use a stove ______?","ch":["A) to","B) for","C) at","D) in"],"a":"C"},{"q":"We use a stove ______ cook food.","ch":["A) for","B) at","C) to","D) in"],"a":"B"},{"q":"A circle has a ______ edge.","ch":["A) straight","B) narrow","C) curved","D) wide"],"a":"C"},{"q":"He is a ______ and strong soldier.","ch":["A) tall","B) tallest","C) taller","D) more tall"],"a":"D"},{"q":"This is the ______ problem on the test.","ch":["A) hard","B) harder","C) hardest","D) most hard"],"a":"C"},{"q":"English is ______ than math for me.","ch":["A) easy","B) easier","C) easiest","D) more easy"],"a":"C"},{"q":"5 + 3 = 8.  Five ______ three equals eight.","ch":["A) minus","B) times","C) plus","D) divided by"],"a":"B"},{"q":"The past of 'run' is ______.","ch":["A) runned","B) ran","C) run","D) runs"],"a":"C"},{"q":"10 ÷ 2 = 5.  Ten ______ two equals five.","ch":["A) plus","B) minus","C) times","D) divided by"],"a":"A"},{"q":"A rectangle is ______ and narrow.","ch":["A) fast","B) long","C) wide","D) curved"],"a":"A"},{"q":"He ______ a mistake on the test.","ch":["A) did","B) made","C) got","D) took"],"a":"C"},{"q":"Who has the ______ box?","ch":["A) small","B) smaller","C) smallest","D) most small"],"a":"C"},{"q":"I use this ______ cleaning the floor.","ch":["A) to","B) at","C) in","D) for"],"a":"B"},{"q":"He bought two books. He didn't read ______ book.","ch":["A) both","B) some","C) the other","D) any"],"a":"B"},{"q":"How old is the building?  —  It ______ built in 1980.","ch":["A) is","B) was","C) were","D) be"],"a":"C"}]},{"title":"Test 4","questions":[{"q":"A ______ has three sides.","ch":["A) square","B) rectangle","C) circle","D) triangle"],"a":"D"},{"q":"A ______ has four equal sides.","ch":["A) triangle","B) rectangle","C) square","D) circle"],"a":"C"},{"q":"Draw a dot in the ______ of the circle.","ch":["A) top","B) bottom","C) edge","D) center"],"a":"A"},{"q":"He ______ a circle on the board.","ch":["A) draw","B) draws","C) drew","D) drawing"],"a":"A"},{"q":"The two shapes look ______.","ch":["A) different","B) opposite","C) alike","D) narrow"],"a":"D"},{"q":"He visited France and England. He liked ______ countries.","ch":["A) other","B) some","C) any","D) both"],"a":"C"},{"q":"My country is ______ than yours.","ch":["A) hot","B) more hot","C) hotter","D) hottest"],"a":"B"},{"q":"This rectangle is ______ than that one.","ch":["A) wide","B) more wide","C) widest","D) wider"],"a":"C"},{"q":"Do you have ______ coffee?","ch":["A) any","B) some","C) both","D) other"],"a":"D"},{"q":"No, I don't have ______ sugar.","ch":["A) some","B) both","C) any","D) other"],"a":"D"},{"q":"Do you want juice or coffee?  —  I'd like ______, please.","ch":["A) other","B) any","C) some","D) both"],"a":"B"},{"q":"One pen is mine; ______ is my brother's.","ch":["A) both","B) the other","C) any","D) some"],"a":"C"},{"q":"How ______ is the house?","ch":["A) long","B) much","C) old","D) many"],"a":"A"},{"q":"How old ______ Ahmed?","ch":["A) are","B) was","C) is","D) were"],"a":"D"},{"q":"Ahmed is ______ student in the class.","ch":["A) tall","B) taller","C) the tall","D) the tallest"],"a":"C"},{"q":"What do we use a stove ______?","ch":["A) to","B) for","C) at","D) in"],"a":"C"},{"q":"We use a stove ______ cook food.","ch":["A) for","B) at","C) to","D) in"],"a":"C"},{"q":"A circle has a ______ edge.","ch":["A) straight","B) narrow","C) curved","D) wide"],"a":"B"},{"q":"He is a ______ and strong soldier.","ch":["A) tall","B) tallest","C) taller","D) more tall"],"a":"D"},{"q":"This is the ______ problem on the test.","ch":["A) hard","B) harder","C) hardest","D) most hard"],"a":"C"},{"q":"English is ______ than math for me.","ch":["A) easy","B) easier","C) easiest","D) more easy"],"a":"B"},{"q":"5 + 3 = 8.  Five ______ three equals eight.","ch":["A) minus","B) times","C) plus","D) divided by"],"a":"D"},{"q":"The past of 'run' is ______.","ch":["A) runned","B) ran","C) run","D) runs"],"a":"C"},{"q":"10 ÷ 2 = 5.  Ten ______ two equals five.","ch":["A) plus","B) minus","C) times","D) divided by"],"a":"D"},{"q":"A rectangle is ______ and narrow.","ch":["A) fast","B) long","C) wide","D) curved"],"a":"B"},{"q":"He ______ a mistake on the test.","ch":["A) did","B) made","C) got","D) took"],"a":"B"},{"q":"Who has the ______ box?","ch":["A) small","B) smaller","C) smallest","D) most small"],"a":"C"},{"q":"I use this ______ cleaning the floor.","ch":["A) to","B) at","C) in","D) for"],"a":"C"},{"q":"He bought two books. He didn't read ______ book.","ch":["A) both","B) some","C) the other","D) any"],"a":"B"},{"q":"How old is the building?  —  It ______ built in 1980.","ch":["A) is","B) was","C) were","D) be"],"a":"C"}]},{"title":"Test 5","questions":[{"q":"A ______ has three sides.","ch":["A) square","B) rectangle","C) circle","D) triangle"],"a":"D"},{"q":"A ______ has four equal sides.","ch":["A) triangle","B) rectangle","C) square","D) circle"],"a":"A"},{"q":"Draw a dot in the ______ of the circle.","ch":["A) top","B) bottom","C) edge","D) center"],"a":"D"},{"q":"He ______ a circle on the board.","ch":["A) draw","B) draws","C) drew","D) drawing"],"a":"C"},{"q":"The two shapes look ______.","ch":["A) different","B) opposite","C) alike","D) narrow"],"a":"C"},{"q":"He visited France and England. He liked ______ countries.","ch":["A) other","B) some","C) any","D) both"],"a":"C"},{"q":"My country is ______ than yours.","ch":["A) hot","B) more hot","C) hotter","D) hottest"],"a":"B"},{"q":"This rectangle is ______ than that one.","ch":["A) wide","B) more wide","C) widest","D) wider"],"a":"C"},{"q":"Do you have ______ coffee?","ch":["A) any","B) some","C) both","D) other"],"a":"D"},{"q":"No, I don't have ______ sugar.","ch":["A) some","B) both","C) any","D) other"],"a":"B"},{"q":"Do you want juice or coffee?  —  I'd like ______, please.","ch":["A) other","B) any","C) some","D) both"],"a":"C"},{"q":"One pen is mine; ______ is my brother's.","ch":["A) both","B) the other","C) any","D) some"],"a":"C"},{"q":"How ______ is the house?","ch":["A) long","B) much","C) old","D) many"],"a":"D"},{"q":"How old ______ Ahmed?","ch":["A) are","B) was","C) is","D) were"],"a":"C"},{"q":"Ahmed is ______ student in the class.","ch":["A) tall","B) taller","C) the tall","D) the tallest"],"a":"D"},{"q":"What do we use a stove ______?","ch":["A) to","B) for","C) at","D) in"],"a":"C"},{"q":"We use a stove ______ cook food.","ch":["A) for","B) at","C) to","D) in"],"a":"C"},{"q":"A circle has a ______ edge.","ch":["A) straight","B) narrow","C) curved","D) wide"],"a":"C"},{"q":"He is a ______ and strong soldier.","ch":["A) tall","B) tallest","C) taller","D) more tall"],"a":"D"},{"q":"This is the ______ problem on the test.","ch":["A) hard","B) harder","C) hardest","D) most hard"],"a":"C"},{"q":"English is ______ than math for me.","ch":["A) easy","B) easier","C) easiest","D) more easy"],"a":"C"},{"q":"5 + 3 = 8.  Five ______ three equals eight.","ch":["A) minus","B) times","C) plus","D) divided by"],"a":"D"},{"q":"The past of 'run' is ______.","ch":["A) runned","B) ran","C) run","D) runs"],"a":"C"},{"q":"10 ÷ 2 = 5.  Ten ______ two equals five.","ch":["A) plus","B) minus","C) times","D) divided by"],"a":"C"},{"q":"A rectangle is ______ and narrow.","ch":["A) fast","B) long","C) wide","D) curved"],"a":"C"},{"q":"He ______ a mistake on the test.","ch":["A) did","B) made","C) got","D) took"],"a":"C"},{"q":"Who has the ______ box?","ch":["A) small","B) smaller","C) smallest","D) most small"],"a":"B"},{"q":"I use this ______ cleaning the floor.","ch":["A) to","B) at","C) in","D) for"],"a":"C"},{"q":"He bought two books. He didn't read ______ book.","ch":["A) both","B) some","C) the other","D) any"],"a":"B"},{"q":"How old is the building?  —  It ______ built in 1980.","ch":["A) is","B) was","C) were","D) be"],"a":"C"}]}];
+var currentTest=0,currentQ=0,answers=[],answered=[];
+
+// Build test grid buttons
+var grid=document.getElementById('testGrid');
+for(var i=0;i<TESTS.length;i++){
+  var btn=document.createElement('div');
+  btn.className='test-btn';
+  btn.innerHTML='<span class="num">'+(i+1)+'</span><span class="lbl">Test</span>';
+  (function(idx){btn.addEventListener('click',function(){startTest(idx);});})(i);
+  grid.appendChild(btn);
+}
+
+// Button event listeners
+document.getElementById('backBtn').addEventListener('click',backToSelector);
+document.getElementById('backBtn2').addEventListener('click',backToSelector);
+document.getElementById('prevBtn').addEventListener('click',prevQ);
+document.getElementById('nextBtn').addEventListener('click',nextQ);
+document.getElementById('retryBtn').addEventListener('click',function(){startTest(currentTest);});
+
+function startTest(idx){
+  currentTest=idx;currentQ=0;
+  answers=new Array(30).fill(null);
+  answered=new Array(30).fill(false);
+  document.getElementById('selector').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quizTitle').textContent=BOOK_TITLE+' — '+TESTS[idx].title;
+  renderQ();
+}
+
+function renderQ(){
+  var test=TESTS[currentTest];
+  var q=test.questions[currentQ];
+  var total=test.questions.length;
+  document.getElementById('qNum').textContent='Question '+(currentQ+1)+' of '+total;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('progressFill').style.width=(((currentQ+1)/total)*100)+'%';
+  var fb=document.getElementById('feedback');
+  fb.className='feedback';fb.textContent='';
+  var choicesEl=document.getElementById('choices');
+  choicesEl.innerHTML='';
+  q.ch.forEach(function(choice,i){
+    var letter=['A','B','C','D'][i];
+    var div=document.createElement('div');
+    div.className='choice';
+    if(answered[currentQ])div.classList.add('locked');
+    var userAns=answers[currentQ];
+    if(answered[currentQ]){
+      if(letter===q.a)div.classList.add('correct');
+      else if(letter===userAns&&userAns!==q.a)div.classList.add('wrong');
+    }else if(userAns===letter){div.classList.add('selected');}
+    div.innerHTML='<div class="choice-letter">'+letter+'</div><div class="choice-text">'+choice.substring(3)+'</div>';
+    if(!answered[currentQ]){
+      (function(l){div.addEventListener('click',function(){selectAnswer(l);});})(letter);
+    }
+    choicesEl.appendChild(div);
+  });
+  if(answered[currentQ]){
+    var correct=answers[currentQ]===q.a;
+    fb.className='feedback '+(correct?'correct-fb':'wrong-fb');
+    fb.textContent=correct?'✓ Correct!':'✗ Wrong. The correct answer is '+q.a+'.';
+  }
+  document.getElementById('prevBtn').disabled=currentQ===0;
+  document.getElementById('nextBtn').textContent=currentQ===TESTS[currentTest].questions.length-1?'Finish ✓':'Next →';
+}
+
+function selectAnswer(letter){
+  if(answered[currentQ])return;
+  answers[currentQ]=letter;answered[currentQ]=true;renderQ();
+}
+
+function nextQ(){
+  if(!answered[currentQ]){alert('Please choose an answer first.');return;}
+  if(currentQ<TESTS[currentTest].questions.length-1){currentQ++;renderQ();}
+  else{showResults();}
+}
+
+function prevQ(){if(currentQ>0){currentQ--;renderQ();}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  var test=TESTS[currentTest];var score=0;
+  answers.forEach(function(a,i){if(a===test.questions[i].a)score++;});
+  var pass=score>=24;
+  document.getElementById('resultEmoji').textContent=pass?'🎯':'📚';
+  document.getElementById('resultScore').textContent=score+'/30';
+  document.getElementById('resultScore').className='result-score '+(pass?'pass':'fail');
+  var badge=document.getElementById('resultBadge');
+  badge.textContent=pass?'✅ PASSED':'❌ NOT PASSED';
+  badge.className='result-badge '+(pass?'pass':'fail');
+  document.getElementById('resultMsg').textContent=pass?'Excellent! You scored '+score+' out of 30. Keep it up!':'You scored '+score+' out of 30. You need 24 to pass. Review your mistakes and try again!';
+  var reviewList=document.getElementById('reviewList');
+  var wrongs=answers.map(function(a,i){return{i:i,a:a,correct:a===test.questions[i].a,q:test.questions[i]};}).filter(function(x){return!x.correct;});
+  if(wrongs.length===0){
+    reviewList.innerHTML='<h3>Review</h3><p style="color:var(--green);font-size:14px;padding:10px 0">🎉 Perfect score! No mistakes.</p>';
+  }else{
+    reviewList.innerHTML='<h3>Mistakes to Review ('+wrongs.length+')</h3>'+wrongs.map(function(w){
+      return'<div class="review-item"><span class="review-icon">❌</span><div class="review-q">Q'+(w.i+1)+': '+w.q.q+'</div><div class="review-ans wrong">You: '+(w.a||'—')+' | Correct: <span class="correct-ans">'+w.q.a+'</span></div></div>';
+    }).join('');
+  }
+}
+
+function backToSelector(){
+  document.getElementById('selector').style.display='block';
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+}
+</script>
+</body>
+</html>
